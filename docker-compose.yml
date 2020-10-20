@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+  symfony:
+    build: symfony
+    container_name: sf
+    ports:
+      - '80:80'
+      - '8000:8000'
+    volumes:
+      - ./isubat-app:/var/www/html
+    depends_on:
+      - db
+    env_file:
+      - symfony/.env
+
+  db:
+    image: mysql:5.7
+    container_name: mysql_isubat
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_DATABASE: ${SYMFONY_DB_NAME}
+      MYSQL_USER: ${SYMFONY_DB_USER}
+      MYSQL_PASSWORD: ${SYMFONY_DB_PATH}
+    ports:
+      - "3307:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_DATABASE: ${SYMFONY_DB_NAME}
+      MYSQL_USER: ${SYMFONY_DB_USER}
+      MYSQL_PASSWORD: ${SYMFONY_DB_PATH}
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:
